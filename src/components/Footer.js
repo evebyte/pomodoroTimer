@@ -6,7 +6,7 @@ const Footer = () => {
 				<a
 					href="https://github.com/evebyte"
 					target="_blank"
-					className="font-bold text-green-900 dark:text-green-300 underline hover:text-yellow-300"
+					className="font-bold text-green-900 dark:text-green-300 underline hover:text-amber-400 dark:hover:text-amber-400"
 					rel="noopener noreferrer"
 				>
 					eve

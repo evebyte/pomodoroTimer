@@ -2,6 +2,9 @@ import { useSelector, useDispatch } from "react-redux";
 import {
 	breakLengthDecrement,
 	breakLengthIncrement,
+	selectBreakLength,
+	selectSessionLength,
+	selectIsRunning,
 	sessionLengthDecrement,
 	sessionLengthIncrement,
 } from "../features/timer/timerSlice";
@@ -19,8 +22,13 @@ const BreakAndSessionControls = () => {
 };
 
 const BreakControls = () => {
-	const breakLength = useSelector((state) => state.breakLength);
+	const breakLength = useSelector(selectBreakLength);
+	const isRunning = useSelector(selectIsRunning);
 	const dispatch = useDispatch();
+
+	// the break length cannot be less than 0 or greater than 60
+	const greaterThan0 = breakLength > 0;
+	const lessThan60 = breakLength < 60;
 
 	return (
 		<div id="break-controls" className="m-3">
@@ -36,7 +44,9 @@ const BreakControls = () => {
 						hover:bg-green-900
 						hover:text-green-300
 						dark:border-green-300 dark:hover:bg-green-300 dark:hover:text-green-900 rounded-full  p-1 m-1"
-					onClick={() => dispatch(breakLengthDecrement())}
+					onClick={() =>
+						dispatch(greaterThan0 && !isRunning && breakLengthDecrement())
+					}
 				>
 					<i class="fa-solid fa-minus"></i>
 				</button>
@@ -52,7 +62,9 @@ const BreakControls = () => {
 						hover:bg-green-900
 						hover:text-green-300
 						dark:border-green-300 dark:hover:bg-green-300 dark:hover:text-green-900 rounded-full  p-1 m-1"
-					onClick={() => dispatch(breakLengthIncrement())}
+					onClick={() =>
+						dispatch(lessThan60 && !isRunning && breakLengthIncrement())
+					}
 				>
 					<i class="fa-solid fa-plus"></i>
 				</button>
@@ -62,8 +74,13 @@ const BreakControls = () => {
 };
 
 const SessionControls = () => {
-	const sessionLength = useSelector((state) => state.sessionLength);
+	const sessionLength = useSelector(selectSessionLength);
+	const isRunning = useSelector(selectIsRunning);
 	const dispatch = useDispatch();
+
+	// the session length cannot be less than 0 or greater than 60
+	const greaterThan0 = sessionLength > 0;
+	const lessThan60 = sessionLength < 60;
 
 	return (
 		<div id="session-controls" className="m-3">
@@ -78,7 +95,9 @@ const SessionControls = () => {
 						border-green-900 hover:bg-green-900
 						hover:text-green-300
 						dark:border-green-300 dark:hover:bg-green-300 dark:hover:text-green-900 rounded-full  p-1 m-1"
-					onClick={() => dispatch(sessionLengthDecrement())}
+					onClick={() =>
+						dispatch(greaterThan0 && !isRunning && sessionLengthDecrement())
+					}
 				>
 					<i class="fa-solid fa-minus"></i>
 				</button>
@@ -91,7 +110,9 @@ const SessionControls = () => {
 						border-green-900 hover:bg-green-900
 						hover:text-green-300
 						dark:border-green-300 dark:hover:bg-green-300 dark:hover:text-green-900 rounded-full  p-1 m-1"
-					onClick={() => dispatch(sessionLengthIncrement())}
+					onClick={() =>
+						dispatch(lessThan60 && !isRunning && sessionLengthIncrement())
+					}
 				>
 					<i class="fa-solid fa-plus"></i>
 				</button>

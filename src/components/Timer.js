@@ -1,6 +1,11 @@
-import { useSelector } from "react-redux";
-// import actions from timerSlice
-// import {} from "./features/timer/timerSlice";
+import { useSelector, useDispatch } from "react-redux";
+import {
+	selectIsRunning,
+	selectIsSession,
+	startTimer,
+	stopTimer,
+	resetTimer,
+} from "../features/timer/timerSlice";
 
 const Timer = () => {
 	return (
@@ -13,7 +18,7 @@ const Timer = () => {
 };
 
 const TimerLabel = () => {
-	const isSession = useSelector((state) => state.isSession);
+	const isSession = useSelector(selectIsSession);
 
 	return (
 		<div id="timer-label">
@@ -26,11 +31,23 @@ const TimerLabel = () => {
 };
 
 const TimeLeft = () => {
+	const timeLeft = useSelector((state) => state.timer.timeLeft);
+
+	const formatTime = (timeLeft) => {
+		const minutes = Math.floor(timeLeft / 60);
+		const seconds = timeLeft % 60;
+
+		const minutesString = minutes < 10 ? `0${minutes}` : minutes;
+		const secondsString = seconds < 10 ? `0${seconds}` : seconds;
+
+		return `${minutesString}:${secondsString}`;
+	};
+
 	return (
 		<div id="time-left">
 			{/* time format = mm:ss */}
 			<span id="time-left-text" className="text-6xl">
-				25:00
+				{formatTime(timeLeft)}
 			</span>
 		</div>
 	);
@@ -46,8 +63,8 @@ const TimerControls = () => {
 };
 
 const StartStop = () => {
-	const isRunning = useSelector((state) => state.isRunning);
-	// const dispatch = useDispatch();
+	const isRunning = useSelector(selectIsRunning);
+	const dispatch = useDispatch();
 
 	return (
 		<button
@@ -58,9 +75,8 @@ const StartStop = () => {
 				hover:text-green-300
 				dark:border-green-300 dark:hover:bg-green-300 dark:hover:text-green-900 
 				rounded-full  p-2 m-1"
-			// onClick={() => dispatch(isRunning ? stopTimer() : startTimer())}
+			onClick={() => dispatch(isRunning ? stopTimer() : startTimer())}
 		>
-			{/* display pause or play  */}
 			{isRunning ? (
 				<i className="fa-solid fa-pause"></i>
 			) : (
@@ -71,7 +87,7 @@ const StartStop = () => {
 };
 
 const Reset = () => {
-	// const dispatch = useDispatch();
+	const dispatch = useDispatch();
 
 	return (
 		<button
@@ -81,7 +97,7 @@ const Reset = () => {
 				hover:bg-green-900
 				hover:text-green-300
 				dark:border-green-300 dark:hover:bg-green-300 dark:hover:text-green-900 rounded-full  p-2 m-1"
-			// onClick={() => dispatch(resetTimer())}
+			onClick={() => dispatch(resetTimer())}
 		>
 			<i className="fa-solid fa-sync-alt"></i>
 		</button>

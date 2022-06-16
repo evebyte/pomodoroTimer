@@ -4,10 +4,9 @@ const initialState = {
 	breakLength: 5,
 	sessionLength: 25,
 	isSession: true,
-	timer: 1500,
 	isRunning: false,
-	isPaused: false,
-	isReset: false,
+	timeLeft: 1500,
+	reset: false,
 };
 
 export const timerSlice = createSlice({
@@ -22,9 +21,29 @@ export const timerSlice = createSlice({
 		},
 		sessionLengthIncrement: (state) => {
 			state.sessionLength += 1;
+			state.timeLeft = state.sessionLength * 60;
 		},
 		sessionLengthDecrement: (state) => {
 			state.sessionLength -= 1;
+			state.timeLeft = state.sessionLength * 60;
+		},
+		// handles play/pause icon toggle, needs to connect to timer logic
+		startTimer: (state) => {
+			state.isRunning = true;
+			// lock increment/decrement buttons
+		},
+		// handles play/pause icon toggle, needs to connect to timer logic
+		stopTimer: (state) => {
+			state.isRunning = false;
+			// unlock increment/decrement buttons
+		},
+		// needs more work
+		resetTimer: (state) => {
+			state.breakLength = 5;
+			state.sessionLength = 25;
+			state.isRunning = false;
+			state.timeLeft = 1500;
+			state.reset = false;
 		},
 	},
 });
@@ -34,6 +53,14 @@ export const {
 	breakLengthDecrement,
 	sessionLengthIncrement,
 	sessionLengthDecrement,
+	startTimer,
+	stopTimer,
+	resetTimer,
 } = timerSlice.actions;
+
+export const selectBreakLength = (state) => state.timer.breakLength;
+export const selectSessionLength = (state) => state.timer.sessionLength;
+export const selectIsSession = (state) => state.timer.isSession;
+export const selectIsRunning = (state) => state.timer.isRunning;
 
 export default timerSlice.reducer;

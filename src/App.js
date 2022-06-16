@@ -1,10 +1,8 @@
 import React from "react";
-// replace import counter from "./counter";
-// with an import for a different component
-import "./App.css";
+
+// react components
 import Header from "./components/Header.js";
 import Timer from "./components/Timer.js";
-import TimerControls from "./components/TimerControls.js";
 import BreakAndSessionControls from "./components/BreakAndSessionControls.js";
 import Footer from "./components/Footer.js";
 
@@ -13,7 +11,6 @@ function App() {
 		<main id="app" className="">
 			<Header />
 			<Timer />
-			<TimerControls />
 			<BreakAndSessionControls />
 			<Footer />
 		</main>

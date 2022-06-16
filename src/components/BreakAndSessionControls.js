@@ -1,3 +1,11 @@
+import { useSelector, useDispatch } from "react-redux";
+import {
+	breakLengthDecrement,
+	breakLengthIncrement,
+	sessionLengthDecrement,
+	sessionLengthIncrement,
+} from "../features/timer/timerSlice";
+
 const BreakAndSessionControls = () => {
 	return (
 		<div
@@ -11,6 +19,9 @@ const BreakAndSessionControls = () => {
 };
 
 const BreakControls = () => {
+	const breakLength = useSelector((state) => state.breakLength);
+	const dispatch = useDispatch();
+
 	return (
 		<div id="break-controls" className="m-3">
 			<div id="break-label">
@@ -25,11 +36,14 @@ const BreakControls = () => {
 						hover:bg-green-900
 						hover:text-green-300
 						dark:border-green-300 dark:hover:bg-green-300 dark:hover:text-green-900 rounded-full  p-1 m-1"
+					onClick={() => dispatch(breakLengthDecrement())}
 				>
 					<i class="fa-solid fa-minus"></i>
 				</button>
 
-				<span id="break-length">5</span>
+				<span id="break-length" className="">
+					{breakLength}
+				</span>
 
 				<button
 					id="break-increment"
@@ -38,6 +52,7 @@ const BreakControls = () => {
 						hover:bg-green-900
 						hover:text-green-300
 						dark:border-green-300 dark:hover:bg-green-300 dark:hover:text-green-900 rounded-full  p-1 m-1"
+					onClick={() => dispatch(breakLengthIncrement())}
 				>
 					<i class="fa-solid fa-plus"></i>
 				</button>
@@ -47,6 +62,9 @@ const BreakControls = () => {
 };
 
 const SessionControls = () => {
+	const sessionLength = useSelector((state) => state.sessionLength);
+	const dispatch = useDispatch();
+
 	return (
 		<div id="session-controls" className="m-3">
 			<div id="session-label">
@@ -60,11 +78,12 @@ const SessionControls = () => {
 						border-green-900 hover:bg-green-900
 						hover:text-green-300
 						dark:border-green-300 dark:hover:bg-green-300 dark:hover:text-green-900 rounded-full  p-1 m-1"
+					onClick={() => dispatch(sessionLengthDecrement())}
 				>
 					<i class="fa-solid fa-minus"></i>
 				</button>
 
-				<span id="session-length">25</span>
+				<span id="session-length">{sessionLength}</span>
 
 				<button
 					id="session-increment"
@@ -72,6 +91,7 @@ const SessionControls = () => {
 						border-green-900 hover:bg-green-900
 						hover:text-green-300
 						dark:border-green-300 dark:hover:bg-green-300 dark:hover:text-green-900 rounded-full  p-1 m-1"
+					onClick={() => dispatch(sessionLengthIncrement())}
 				>
 					<i class="fa-solid fa-plus"></i>
 				</button>

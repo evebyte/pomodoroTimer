@@ -1,10 +1,17 @@
+// react
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { Provider } from "react-redux";
+
+// redux
 import { store } from "./app/store";
+import { Provider } from "react-redux";
+
+// components
 import App from "./App";
-import reportWebVitals from "./reportWebVitals";
 import "./index.css";
+
+// testing
+import reportWebVitals from "./reportWebVitals";
 
 const container = document.getElementById("root");
 const root = createRoot(container);

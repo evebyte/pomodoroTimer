@@ -2,4 +2,6 @@
 
 Break time into intervals and stay focused while working.
 
-A react-redux app created for a freecodecamp.org project.
+Created with React, Redux, and TailwindCSS app created for a freecodecamp.org project.
+
+https://www.freecodecamp.org/learn/front-end-development-libraries/

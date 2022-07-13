@@ -7,15 +7,6 @@ module.exports = {
 		"./public/index.html",
 	],
 	darkMode: "class",
-	theme: {
-		extend: {
-			colors: {
-				"primary-light": "",
-				"primary-dark": "",
-				"secondary-light": "",
-				"secondary-dark": "",
-			},
-		},
-	},
+	theme: {},
 	plugins: [],
 };

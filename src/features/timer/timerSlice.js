@@ -1,66 +1,69 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-	breakLength: 5,
-	sessionLength: 25,
+	break: 5,
+	session: 25,
 	isSession: true,
 	isRunning: false,
 	timeLeft: 1500,
-	reset: false,
+	deltaTime: 0,
+	timerId: null,
 };
 
 export const timerSlice = createSlice({
 	name: "timer",
 	initialState,
 	reducers: {
-		breakLengthIncrement: (state) => {
-			state.breakLength += 1;
+		adjustBreak: (state, action) => {
+			state.break = action.payload;
 		},
-		breakLengthDecrement: (state) => {
-			state.breakLength -= 1;
+		adjustSession: (state, action) => {
+			state.session = action.payload;
+			state.timeLeft = state.session * 60;
 		},
-		sessionLengthIncrement: (state) => {
-			state.sessionLength += 1;
-			state.timeLeft = state.sessionLength * 60;
+		toggleSesssion: (state) => {
+			state.isSession = !state.isSession;
+			state.timeLeft = state.isSession ? state.session * 60 : state.break * 60;
 		},
-		sessionLengthDecrement: (state) => {
-			state.sessionLength -= 1;
-			state.timeLeft = state.sessionLength * 60;
+		// todo: need a way to update the timeLeft, maybe asyncThunk?
+		updateTimeLeft: (state, action) => {
+			state.timeLeft = action.payload;
 		},
-		// handles play/pause icon toggle, needs to connect to timer logic
-		startTimer: (state) => {
+		// todo: handle timer logic
+		timerComplete: (state, action) => {
 			state.isRunning = true;
-			// lock increment/decrement buttons
+			state.isSession = !state.isSession;
+			state.timeLeft = state.isSession ? state.session * 60 : state.break * 60;
 		},
-		// handles play/pause icon toggle, needs to connect to timer logic
-		stopTimer: (state) => {
-			state.isRunning = false;
-			// unlock increment/decrement buttons
+		toggleTimer: (state, action) => {
+			state.isRunning = action.payload;
 		},
-		// needs more work
 		resetTimer: (state) => {
-			state.breakLength = 5;
-			state.sessionLength = 25;
+			state.break = 5;
+			state.session = 25;
+			state.isSession = true;
 			state.isRunning = false;
 			state.timeLeft = 1500;
-			state.reset = false;
+			state.timeElapsed = 0;
+			state.timerId = null;
 		},
 	},
 });
 
 export const {
-	breakLengthIncrement,
-	breakLengthDecrement,
-	sessionLengthIncrement,
-	sessionLengthDecrement,
-	startTimer,
-	stopTimer,
+	adjustBreak,
+	adjustSession,
+	updateTimeLeft,
+	timerComplete,
+	toggleTimer,
 	resetTimer,
 } = timerSlice.actions;
 
-export const selectBreakLength = (state) => state.timer.breakLength;
-export const selectSessionLength = (state) => state.timer.sessionLength;
+export const selectBreak = (state) => state.timer.break;
+export const selectSession = (state) => state.timer.session;
 export const selectIsSession = (state) => state.timer.isSession;
 export const selectIsRunning = (state) => state.timer.isRunning;
+export const selectTimeLeft = (state) => state.timer.timeLeft;
+export const selectTimeElapsed = (state) => state.timer.timeElapsed;
 
 export default timerSlice.reducer;

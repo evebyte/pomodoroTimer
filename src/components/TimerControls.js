@@ -5,7 +5,8 @@ import useDarkMode from "../hooks/useDarkMode";
 import { useSelector, useDispatch } from "react-redux";
 import {
 	selectIsRunning,
-	toggleTimer,
+	startTimer,
+	stopTimer,
 	resetTimer,
 } from "../features/timer/timerSlice";
 
@@ -33,7 +34,7 @@ const StartStop = () => {
 				text-green-300 dark:text-green-300
 				hover:text-orange-200 dark:hover:text-orange-300 
 				rounded-full  p-3 m-1 font-bold hover:scale-110 active:scale-90"
-			onClick={() => dispatch(toggleTimer(!isRunning))}
+			onClick={() => dispatch(isRunning ? stopTimer() : startTimer())}
 		>
 			{isRunning ? (
 				<span>

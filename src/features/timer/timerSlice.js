@@ -6,7 +6,8 @@ const initialState = {
 	isSession: true,
 	isRunning: false,
 	timeLeft: 1500,
-	deltaTime: 0,
+	currentTime: Date.now(),
+	expireTime: null,
 	timerId: null,
 };
 
@@ -21,22 +22,24 @@ export const timerSlice = createSlice({
 			state.session = action.payload;
 			state.timeLeft = state.session * 60;
 		},
-		toggleSesssion: (state) => {
+		completeTimer: (state, action) => {
 			state.isSession = !state.isSession;
 			state.timeLeft = state.isSession ? state.session * 60 : state.break * 60;
+			state.currentTime = Date.now();
+			state.expireTime = state.currentTime + state.timeLeft;
 		},
-		// todo: need a way to update the timeLeft, maybe asyncThunk?
-		updateTimeLeft: (state, action) => {
-			state.timeLeft = action.payload;
-		},
-		// todo: handle timer logic
-		timerComplete: (state, action) => {
+		startTimer: (state, action) => {
 			state.isRunning = true;
-			state.isSession = !state.isSession;
-			state.timeLeft = state.isSession ? state.session * 60 : state.break * 60;
+			state.currentTime = Date.now();
+			state.expireTime = state.currentTime + state.timeLeft;
+			state.timerId = setTimeout(() => {
+				completeTimer(state, action);
+				console.log("timer complete");
+			}, state.timeLeft * 1000);
 		},
-		toggleTimer: (state, action) => {
-			state.isRunning = action.payload;
+		stopTimer: (state, action) => {
+			state.isRunning = false;
+			clearTimeout(state.timerId);
 		},
 		resetTimer: (state) => {
 			state.break = 5;
@@ -44,7 +47,8 @@ export const timerSlice = createSlice({
 			state.isSession = true;
 			state.isRunning = false;
 			state.timeLeft = 1500;
-			state.timeElapsed = 0;
+			state.currentTime = Date.now();
+			state.expireTime = null;
 			state.timerId = null;
 		},
 	},
@@ -53,9 +57,9 @@ export const timerSlice = createSlice({
 export const {
 	adjustBreak,
 	adjustSession,
-	updateTimeLeft,
-	timerComplete,
-	toggleTimer,
+	completeTimer,
+	startTimer,
+	stopTimer,
 	resetTimer,
 } = timerSlice.actions;
 
@@ -64,6 +68,7 @@ export const selectSession = (state) => state.timer.session;
 export const selectIsSession = (state) => state.timer.isSession;
 export const selectIsRunning = (state) => state.timer.isRunning;
 export const selectTimeLeft = (state) => state.timer.timeLeft;
-export const selectTimeElapsed = (state) => state.timer.timeElapsed;
+export const selectCurrentTime = (state) => state.timer.currentTime;
+export const selectExpireTime = (state) => state.timer.expireTime;
 
 export default timerSlice.reducer;

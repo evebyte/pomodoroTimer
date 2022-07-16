@@ -1,5 +1,10 @@
-import { useSelector, useDispatch } from "react-redux";
-import { selectIsSession, selectTimeLeft } from "../features/timer/timerSlice";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import {
+	selectIsSession,
+	selectIsRunning,
+	selectTimeLeft,
+} from "../features/timer/timerSlice";
 import formatTime from "../utils/formatTime";
 
 const TimerDisplay = () => {
@@ -26,15 +31,34 @@ const TimerLabel = () => {
 
 const TimeLeft = () => {
 	let timeLeft = useSelector(selectTimeLeft);
-	const dispatch = useDispatch();
+	// let isSession = useSelector(selectIsSession);
+	let isRunning = useSelector(selectIsRunning);
+
+	const [countdown, setCountdown] = useState(timeLeft);
+
+	useEffect(() => {
+		// set the countdown to the timeLeft
+		setCountdown(timeLeft);
+	}, [timeLeft]);
+
+	useEffect(() => {
+		// if the timer is running, decrement the countdown every second
+		if (isRunning) {
+			const interval = setInterval(() => {
+				setCountdown(countdown - 1);
+			}, 1000);
+			return () => clearInterval(interval);
+		}
+	}, [countdown, setCountdown, isRunning]);
 
 	return (
 		<div id="time-left" className="m-2">
-			<span id="time-left-text" className="text-8xl">
-				{formatTime(timeLeft)}
+			<span id="ticonstme-left-text" className="text-8xl">
+				{formatTime(countdown)}
 			</span>
 
-			{/* add beep that plays at 00:00 here */}
+			{/* audio beep that will play when the timer is at 00:00 */}
+			{/* <audio id="beep" src="https://goo.gl/65cBl1" /> */}
 		</div>
 	);
 };

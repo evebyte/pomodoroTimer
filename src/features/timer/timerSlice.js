@@ -70,5 +70,6 @@ export const selectIsRunning = (state) => state.timer.isRunning;
 export const selectTimeLeft = (state) => state.timer.timeLeft;
 export const selectCurrentTime = (state) => state.timer.currentTime;
 export const selectExpireTime = (state) => state.timer.expireTime;
+export const selectTimerId = (state) => state.timer.timerId;
 
 export default timerSlice.reducer;

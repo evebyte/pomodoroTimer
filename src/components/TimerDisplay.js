@@ -4,6 +4,7 @@ import {
 	selectIsSession,
 	selectIsRunning,
 	selectTimeLeft,
+	selectTimerId,
 } from "../features/timer/timerSlice";
 import formatTime from "../utils/formatTime";
 
@@ -33,13 +34,18 @@ const TimeLeft = () => {
 	let timeLeft = useSelector(selectTimeLeft);
 	// let isSession = useSelector(selectIsSession);
 	let isRunning = useSelector(selectIsRunning);
+	let timerId = useSelector(selectTimerId);
 
 	const [countdown, setCountdown] = useState(timeLeft);
 
 	useEffect(() => {
 		// set the countdown to the timeLeft
 		setCountdown(timeLeft);
-	}, [timeLeft]);
+
+		if (timerId === null) {
+			setCountdown(timeLeft);
+		}
+	}, [timeLeft, timerId]);
 
 	useEffect(() => {
 		// if the timer is running, decrement the countdown every second

@@ -22,12 +22,6 @@ export const timerSlice = createSlice({
 			state.session = action.payload;
 			state.timeLeft = state.session * 60;
 		},
-		completeTimer: (state, action) => {
-			state.isSession = !state.isSession;
-			state.timeLeft = state.isSession ? state.session * 60 : state.break * 60;
-			state.currentTime = Date.now();
-			state.expireTime = state.currentTime + state.timeLeft;
-		},
 		startTimer: (state, action) => {
 			state.isRunning = true;
 			state.currentTime = Date.now();
@@ -40,6 +34,16 @@ export const timerSlice = createSlice({
 		stopTimer: (state, action) => {
 			state.isRunning = false;
 			clearTimeout(state.timerId);
+
+			// todo: if timer was stopped before it expired, set the timeLeft to the timeLeft remaining
+		},
+		completeTimer: (state, action) => {
+			state.isSession = !state.isSession;
+			state.timeLeft = state.isSession ? state.session * 60 : state.break * 60;
+			state.currentTime = Date.now();
+			state.expireTime = state.currentTime + state.timeLeft;
+
+			// todo: when the timer finishes, prepare the next session and play the audio beep
 		},
 		resetTimer: (state) => {
 			state.break = 5;

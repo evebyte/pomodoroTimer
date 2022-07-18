@@ -20,21 +20,25 @@ const TimerDisplay = () => {
 const TimerLabel = () => {
 	const isSession = useSelector(selectIsSession);
 
+	useEffect(() => {
+		const timerLabel = isSession ? "Session" : "Break";
+
+		document.getElementById("timer-label").innerHTML = timerLabel;
+	}, [isSession]);
+
+	// todo: make the label responsive to the changes of isSession
+
 	return (
-		<div id="timer-label" className="m-1">
+		<div id="timer-label" className="m-1 text-2xl">
 			{/* this string indicates the session type */}
-			<span id="timer-label-text" className="text-2xl">
-				{isSession ? "Session" : "Break"}
-			</span>
 		</div>
 	);
 };
 
 const TimeLeft = () => {
-	let timeLeft = useSelector(selectTimeLeft);
-	// let isSession = useSelector(selectIsSession);
-	let isRunning = useSelector(selectIsRunning);
-	let timerId = useSelector(selectTimerId);
+	const timeLeft = useSelector(selectTimeLeft);
+	const isRunning = useSelector(selectIsRunning);
+	const timerId = useSelector(selectTimerId);
 
 	const [countdown, setCountdown] = useState(timeLeft);
 

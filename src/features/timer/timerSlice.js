@@ -6,7 +6,7 @@ const initialState = {
 	isSession: true,
 	isRunning: false,
 	timeLeft: 1500,
-	currentTime: Date.now(),
+	currentTime: null,
 	expireTime: null,
 	timerId: null,
 };
@@ -22,28 +22,53 @@ export const timerSlice = createSlice({
 			state.session = action.payload;
 			state.timeLeft = state.session * 60;
 		},
-		startTimer: (state, action) => {
+		startTimer: (state) => {
 			state.isRunning = true;
 			state.currentTime = Date.now();
 			state.expireTime = state.currentTime + state.timeLeft;
+
+			// start the timer
 			state.timerId = setTimeout(() => {
-				completeTimer(state, action);
+				// todo: handle the timer expiration, what happens when the timer completes?
+				// when the timer completes, do the following
+				completeTimer(state);
 				console.log("timer complete");
 			}, state.timeLeft * 1000);
 		},
-		stopTimer: (state, action) => {
+		stopTimer: (state) => {
 			state.isRunning = false;
-			clearTimeout(state.timerId);
+			clearTimeout(state.timerId); // not sure if this is necessary because we also set it to null
+			state.timerId = null;
 
-			// todo: if timer was stopped before it expired, set the timeLeft to the timeLeft remaining
+			// if timer was stopped before it expired, update the timeLeft to the remaining time
+			if (state.expireTime !== null) {
+				const elapsedTime = Date.now() - state.currentTime;
+				state.timeLeft = Math.floor(state.timeLeft - elapsedTime / 1000);
+				state.expireTime = null;
+			}
 		},
-		completeTimer: (state, action) => {
-			state.isSession = !state.isSession;
-			state.timeLeft = state.isSession ? state.session * 60 : state.break * 60;
-			state.currentTime = Date.now();
-			state.expireTime = state.currentTime + state.timeLeft;
-
+		completeTimer: (state) => {
 			// todo: when the timer finishes, prepare the next session and play the audio beep
+			// todo: find a way to call this reducer function upon expiration of the timer?
+
+			console.log("timer complete");
+
+			// state.isSession = !state.isSession;
+			// state.timeLeft = state.isSession ? state.session * 60 : state.break * 60;
+			// console.log(state.timeLeft + " seconds");
+			// state.currentTime = Date.now();
+			// state.expireTime = state.currentTime + state.timeLeft;
+
+			// // start the timer next timer
+			// state.timerId = setTimeout(() => {
+			// 	// when the timer completes, do the following
+			// 	state.isSession = !state.isSession;
+			// 	state.timeLeft = state.isSession
+			// 		? state.session * 60
+			// 		: state.break * 60;
+			// 	state.currentTime = Date.now();
+			// 	state.expireTime = state.currentTime + state.timeLeft;
+			// }, state.timeLeft * 1000);
 		},
 		resetTimer: (state) => {
 			state.break = 5;
@@ -51,9 +76,10 @@ export const timerSlice = createSlice({
 			state.isSession = true;
 			state.isRunning = false;
 			state.timeLeft = 1500;
-			state.currentTime = Date.now();
+			state.currentTime = null;
 			state.expireTime = null;
 			state.timerId = null;
+			clearTimeout(state.timerId); // not sure if this is necessary because we also set it to null
 		},
 	},
 });
@@ -61,9 +87,9 @@ export const timerSlice = createSlice({
 export const {
 	adjustBreak,
 	adjustSession,
-	completeTimer,
 	startTimer,
 	stopTimer,
+	completeTimer,
 	resetTimer,
 } = timerSlice.actions;
 

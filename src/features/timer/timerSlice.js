@@ -30,14 +30,15 @@ export const timerSlice = createSlice({
 			// start the timer
 			state.timerId = setTimeout(() => {
 				// todo: handle the timer expiration, what happens when the timer completes?
-				console.log("hello");
-				state.currentTime = Date.now();
 				// when the timer completes, do the following
+				completeTimer(state);
+				console.log("timer complete");
 			}, state.timeLeft * 1000);
 		},
 		stopTimer: (state) => {
 			state.isRunning = false;
-			clearTimeout(state.timerId);
+			clearTimeout(state.timerId); // not sure if this is necessary because we also set it to null
+			state.timerId = null;
 
 			// if timer was stopped before it expired, update the timeLeft to the remaining time
 			if (state.expireTime !== null) {
@@ -50,22 +51,24 @@ export const timerSlice = createSlice({
 			// todo: when the timer finishes, prepare the next session and play the audio beep
 			// todo: find a way to call this reducer function upon expiration of the timer?
 
-			state.isSession = !state.isSession;
-			state.timeLeft = state.isSession ? state.session * 60 : state.break * 60;
-			console.log(state.timeLeft + " seconds");
-			state.currentTime = Date.now();
-			state.expireTime = state.currentTime + state.timeLeft;
+			console.log("timer complete");
 
-			// start the timer next timer
-			state.timerId = setTimeout(() => {
-				// when the timer completes, do the following
-				state.isSession = !state.isSession;
-				state.timeLeft = state.isSession
-					? state.session * 60
-					: state.break * 60;
-				state.currentTime = Date.now();
-				state.expireTime = state.currentTime + state.timeLeft;
-			}, state.timeLeft * 1000);
+			// state.isSession = !state.isSession;
+			// state.timeLeft = state.isSession ? state.session * 60 : state.break * 60;
+			// console.log(state.timeLeft + " seconds");
+			// state.currentTime = Date.now();
+			// state.expireTime = state.currentTime + state.timeLeft;
+
+			// // start the timer next timer
+			// state.timerId = setTimeout(() => {
+			// 	// when the timer completes, do the following
+			// 	state.isSession = !state.isSession;
+			// 	state.timeLeft = state.isSession
+			// 		? state.session * 60
+			// 		: state.break * 60;
+			// 	state.currentTime = Date.now();
+			// 	state.expireTime = state.currentTime + state.timeLeft;
+			// }, state.timeLeft * 1000);
 		},
 		resetTimer: (state) => {
 			state.break = 5;
@@ -76,6 +79,7 @@ export const timerSlice = createSlice({
 			state.currentTime = null;
 			state.expireTime = null;
 			state.timerId = null;
+			clearTimeout(state.timerId); // not sure if this is necessary because we also set it to null
 		},
 	},
 });
@@ -83,9 +87,9 @@ export const timerSlice = createSlice({
 export const {
 	adjustBreak,
 	adjustSession,
-	completeTimer,
 	startTimer,
 	stopTimer,
+	completeTimer,
 	resetTimer,
 } = timerSlice.actions;
 

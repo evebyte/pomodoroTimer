@@ -31,6 +31,7 @@ const TimerLabel = () => {
 	return (
 		<div id="timer-label" className="m-1 text-2xl">
 			{/* this string indicates the session type */}
+			{isSession ? "Session" : "Break"}
 		</div>
 	);
 };

@@ -1,4 +1,33 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
+// todo: would redux thunk allow me to dispatch an action when the timer is done?
+// create the thunk for the start timer action
+export const thunkStartTimer = createAsyncThunk(
+	"timer/startTimer",
+	async (timeLeft, { rejectWithValue }) => {
+		// reject the thunk if the timeLeft is less than 0
+		if (timeLeft < 0) {
+			return rejectWithValue(timeLeft);
+		}
+
+		// start the timer
+		return timeLeft;
+	}
+);
+
+// create the thunk for the stop timer action
+export const thunkStopTimer = createAsyncThunk(
+	"timer/stopTimer",
+	async (timeLeft, { rejectWithValue }) => {
+		// reject the thunk if the timeLeft is less than 0
+		if (timeLeft < 0) {
+			return rejectWithValue(timeLeft);
+		}
+
+		// stop the timer
+		return timeLeft;
+	}
+);
 
 const initialState = {
 	break: 5,
@@ -31,7 +60,7 @@ export const timerSlice = createSlice({
 			state.timerId = setTimeout(() => {
 				// todo: handle the timer expiration, what happens when the timer completes?
 				// when the timer completes, do the following
-				completeTimer(state);
+				state.isSession = !state.isSession;
 				console.log("timer complete");
 			}, state.timeLeft * 1000);
 		},
@@ -40,10 +69,11 @@ export const timerSlice = createSlice({
 			clearTimeout(state.timerId); // not sure if this is necessary because we also set it to null
 			state.timerId = null;
 
-			// if timer was stopped before it expired, update the timeLeft to the remaining time
+			// if timer was stopped before it expired, subtract the time elapsed from the timeLeft
 			if (state.expireTime !== null) {
 				const elapsedTime = Date.now() - state.currentTime;
 				state.timeLeft = Math.floor(state.timeLeft - elapsedTime / 1000);
+				state.currentTime = null;
 				state.expireTime = null;
 			}
 		},

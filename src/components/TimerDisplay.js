@@ -4,6 +4,7 @@ import {
 	selectIsSession,
 	selectIsRunning,
 	selectTimeLeft,
+	selectExpireTime,
 	selectTimerId,
 } from "../features/timer/timerSlice";
 import formatTime from "../utils/formatTime";
@@ -20,14 +21,6 @@ const TimerDisplay = () => {
 const TimerLabel = () => {
 	const isSession = useSelector(selectIsSession);
 
-	useEffect(() => {
-		const timerLabel = isSession ? "Session" : "Break";
-
-		document.getElementById("timer-label").innerHTML = timerLabel;
-	}, [isSession]);
-
-	// todo: make the label responsive to the changes of isSession
-
 	return (
 		<div id="timer-label" className="m-1 text-2xl">
 			{/* this string indicates the session type */}
@@ -39,6 +32,7 @@ const TimerLabel = () => {
 const TimeLeft = () => {
 	const timeLeft = useSelector(selectTimeLeft);
 	const isRunning = useSelector(selectIsRunning);
+	const expireTime = useSelector(selectExpireTime);
 	const timerId = useSelector(selectTimerId);
 
 	const [countdown, setCountdown] = useState(timeLeft);
@@ -47,10 +41,10 @@ const TimeLeft = () => {
 		// set the countdown to the timeLeft
 		setCountdown(timeLeft);
 
-		if (timerId === null) {
+		if (expireTime === null) {
 			setCountdown(timeLeft);
 		}
-	}, [timeLeft, timerId]);
+	}, [timeLeft, expireTime]);
 
 	useEffect(() => {
 		// if the timer is running, decrement the countdown every second

@@ -1,33 +1,27 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-// todo: would redux thunk allow me to dispatch an action when the timer is done?
-// create the thunk for the start timer action
-export const thunkStartTimer = createAsyncThunk(
+// thunk for start the timer and stop it
+// start the timer and when the timer completes modify the state
+export const startTimer = createAsyncThunk(
 	"timer/startTimer",
-	async (timeLeft, { rejectWithValue }) => {
-		// reject the thunk if the timeLeft is less than 0
-		if (timeLeft < 0) {
-			return rejectWithValue(timeLeft);
-		}
+	async (testing, thunkAPI) => {
+		try {
+			const state = thunkAPI.getState();
 
-		// start the timer
-		return timeLeft;
+			// state.isRunning = true;
+			// state.currentTime = Date.now();
+			// state.expireTime = state.currentTime + state.timeLeft;
+
+			setTimeout(() => {
+				return thunkAPI.dispatch(completeTimer());
+			}, state.timer.timeLeft * 1000);
+		} catch (error) {
+			clearTimeout();
+		}
 	}
 );
 
-// create the thunk for the stop timer action
-export const thunkStopTimer = createAsyncThunk(
-	"timer/stopTimer",
-	async (timeLeft, { rejectWithValue }) => {
-		// reject the thunk if the timeLeft is less than 0
-		if (timeLeft < 0) {
-			return rejectWithValue(timeLeft);
-		}
-
-		// stop the timer
-		return timeLeft;
-	}
-);
+// thunk for the stop timer action)
 
 const initialState = {
 	break: 5,
@@ -51,19 +45,20 @@ export const timerSlice = createSlice({
 			state.session = action.payload;
 			state.timeLeft = state.session * 60;
 		},
-		startTimer: (state) => {
-			state.isRunning = true;
-			state.currentTime = Date.now();
-			state.expireTime = state.currentTime + state.timeLeft;
+		// todo: delete this if thunk works
+		// startTimer: (state) => {
+		// 	state.isRunning = true;
+		// 	state.currentTime = Date.now();
+		// 	state.expireTime = state.currentTime + state.timeLeft;
 
-			// start the timer
-			state.timerId = setTimeout(() => {
-				// todo: handle the timer expiration, what happens when the timer completes?
-				// when the timer completes, do the following
-				state.isSession = !state.isSession;
-				console.log("timer complete");
-			}, state.timeLeft * 1000);
-		},
+		// 	// start the timer
+		// 	state.timerId = setTimeout(() => {
+		// 		// todo: handle the timer expiration, what happens when the timer completes?
+		// 		// when the timer completes, do the following
+		// 		state.isSession = !state.isSession;
+		// 		console.log("timer complete");
+		// 	}, state.timeLeft * 1000);
+		// },
 		stopTimer: (state) => {
 			state.isRunning = false;
 			clearTimeout(state.timerId); // not sure if this is necessary because we also set it to null
@@ -79,19 +74,17 @@ export const timerSlice = createSlice({
 		},
 		completeTimer: (state) => {
 			// todo: when the timer finishes, prepare the next session and play the audio beep
-			// todo: find a way to call this reducer function upon expiration of the timer?
-
 			console.log("timer complete");
 
-			// state.isSession = !state.isSession;
-			// state.timeLeft = state.isSession ? state.session * 60 : state.break * 60;
-			// console.log(state.timeLeft + " seconds");
-			// state.currentTime = Date.now();
-			// state.expireTime = state.currentTime + state.timeLeft;
+			state.isSession = !state.isSession;
+			state.timeLeft = state.isSession ? state.session * 60 : state.break * 60;
+			state.currentTime = Date.now();
+			state.expireTime = state.currentTime + state.timeLeft;
 
-			// // start the timer next timer
+			// todo: start the timer next timer
+
 			// state.timerId = setTimeout(() => {
-			// 	// when the timer completes, do the following
+			// when the timer completes, do the following
 			// 	state.isSession = !state.isSession;
 			// 	state.timeLeft = state.isSession
 			// 		? state.session * 60
@@ -112,12 +105,33 @@ export const timerSlice = createSlice({
 			clearTimeout(state.timerId); // not sure if this is necessary because we also set it to null
 		},
 	},
+	extraReducers: {
+		[startTimer.pending](state) {
+			// console.log("start timer pending");
+		},
+		[startTimer.fulfilled]: (state, action) => {
+			state.isRunning = true;
+			state.currentTime = Date.now();
+			state.expireTime = state.currentTime + state.timeLeft;
+
+			// console.log("start timer fulfilled");
+
+			// start the timer
+			// state.timerId = setTimeout(() => {
+			// 	console.log("timer complete from start timer fulfilled");
+			// }, state.timeLeft * 1000);
+		},
+		[startTimer.rejected]: (state, action) => {
+			// console.log("start timer rejected");
+		},
+
+		// [stopTimer.fulfilled]: (state, action) => {
+	},
 });
 
 export const {
 	adjustBreak,
 	adjustSession,
-	startTimer,
 	stopTimer,
 	completeTimer,
 	resetTimer,

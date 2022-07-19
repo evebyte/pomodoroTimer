@@ -33,7 +33,6 @@ const TimeLeft = () => {
 	const timeLeft = useSelector(selectTimeLeft);
 	const isRunning = useSelector(selectIsRunning);
 	const expireTime = useSelector(selectExpireTime);
-	const timerId = useSelector(selectTimerId);
 
 	const [countdown, setCountdown] = useState(timeLeft);
 

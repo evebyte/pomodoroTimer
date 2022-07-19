@@ -7,6 +7,10 @@ import {
 	selectIsRunning,
 } from "../features/timer/timerSlice";
 
+// font awesome
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
+
 const BreakAndSessionControls = () => {
 	return (
 		<div
@@ -50,7 +54,7 @@ const BreakControls = () => {
 						dispatch(greaterThan1 && !isRunning && adjustBreak(breakLength - 1))
 					}
 				>
-					<i class="fa-solid fa-minus"></i>
+					<FontAwesomeIcon icon={faMinus} />
 				</button>
 
 				<span id="break-length" className="text-lg m-1">
@@ -69,7 +73,7 @@ const BreakControls = () => {
 						dispatch(lessThan60 && !isRunning && adjustBreak(breakLength + 1))
 					}
 				>
-					<i class="fa-solid fa-plus"></i>
+					<FontAwesomeIcon icon={faPlus} />
 				</button>
 			</div>
 		</div>
@@ -110,7 +114,7 @@ const SessionControls = () => {
 						)
 					}
 				>
-					<i class="fa-solid fa-minus"></i>
+					<FontAwesomeIcon icon={faMinus} />
 				</button>
 
 				<span id="session-length" className="text-lg m-1">
@@ -131,7 +135,7 @@ const SessionControls = () => {
 						)
 					}
 				>
-					<i class="fa-solid fa-plus"></i>
+					<FontAwesomeIcon icon={faPlus} />
 				</button>
 			</div>
 		</div>

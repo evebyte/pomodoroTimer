@@ -8,18 +8,37 @@ export const startTimer = createAsyncThunk(
 		try {
 			const state = thunkAPI.getState();
 
-			// state.isRunning = true;
-			// state.currentTime = Date.now();
-			// state.expireTime = state.currentTime + state.timeLeft;
+			// state.timer.currentTime = Date.now();
+			// state.timer.expireTime = state.timer.currentTime + state.timer.timeLeft;
+
+			// todo: connect the start timer and complete timer actions to create an infinite loop unless stopped.
 
 			setTimeout(() => {
-				return thunkAPI.dispatch(completeTimer());
+				thunkAPI.dispatch(completeTimer());
 			}, state.timer.timeLeft * 1000);
 		} catch (error) {
 			clearTimeout();
 		}
 	}
 );
+
+// export const completeTimer = createAsyncThunk(
+// 	"timer/completeTimer",
+// 	async (testing, thunkAPI) => {
+// 		try {
+// 			const getState = thunkAPI.getState();
+
+// 			const state = getState.timer;
+
+// 			console.log("timer complete");
+
+// 			state.isSession = !state.isSession;
+// 			state.timeLeft = state.isSession ? state.session * 60 : state.break * 60;
+// 			state.currentTime = Date.now();
+// 			state.expireTime = state.currentTime + state.timeLeft;
+// 		} catch (error) {}
+// 	}
+// );
 
 // thunk for the stop timer action)
 
@@ -73,7 +92,7 @@ export const timerSlice = createSlice({
 			}
 		},
 		completeTimer: (state) => {
-			// todo: when the timer finishes, prepare the next session and play the audio beep
+			// todo: when the timer finishes, start the next session and play the audio beep
 			console.log("timer complete");
 
 			state.isSession = !state.isSession;
@@ -82,6 +101,7 @@ export const timerSlice = createSlice({
 			state.expireTime = state.currentTime + state.timeLeft;
 
 			// todo: start the timer next timer
+			startTimer(state);
 
 			// state.timerId = setTimeout(() => {
 			// when the timer completes, do the following
@@ -106,26 +126,24 @@ export const timerSlice = createSlice({
 		},
 	},
 	extraReducers: {
-		[startTimer.pending](state) {
-			// console.log("start timer pending");
+		[startTimer.pending]: (state) => {
+			// console.log("pending...");
 		},
 		[startTimer.fulfilled]: (state, action) => {
 			state.isRunning = true;
 			state.currentTime = Date.now();
 			state.expireTime = state.currentTime + state.timeLeft;
 
-			// console.log("start timer fulfilled");
+			// console.log("fulfilled!");
 
 			// start the timer
 			// state.timerId = setTimeout(() => {
-			// 	console.log("timer complete from start timer fulfilled");
+			// 	console.log("timerId: ", state.timerId);
 			// }, state.timeLeft * 1000);
 		},
 		[startTimer.rejected]: (state, action) => {
 			// console.log("start timer rejected");
 		},
-
-		// [stopTimer.fulfilled]: (state, action) => {
 	},
 });
 

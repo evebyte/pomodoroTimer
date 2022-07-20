@@ -1,7 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-// todo: when i stop the timer, the asyncThunk should clearTimeout()
-
 export const startTimer = createAsyncThunk(
 	"timer/startTimer",
 	async (testing, thunkAPI) => {
@@ -9,10 +7,15 @@ export const startTimer = createAsyncThunk(
 			const state = thunkAPI.getState();
 
 			setTimeout(() => {
-				thunkAPI.dispatch(continueTimer());
+				// todo: add play audio + rewind audio
+
+				setTimeout(() => {
+					thunkAPI.dispatch(continueTimer());
+				}, 1000);
 			}, state.timer.timeLeft * 1000);
 		} catch (error) {
 			clearTimeout();
+			// thunkAPI.dispatch(stopTimer());
 		}
 	}
 );
@@ -24,10 +27,15 @@ export const continueTimer = createAsyncThunk(
 			const state = thunkAPI.getState();
 
 			setTimeout(() => {
-				thunkAPI.dispatch(continueTimer());
+				// todo: add play audio + rewind audio
+
+				setTimeout(() => {
+					thunkAPI.dispatch(continueTimer());
+				}, 1000);
 			}, state.timer.timeLeft * 1000);
 		} catch (error) {
 			clearTimeout();
+			// thunkAPI.dispatch(stopTimer());
 		}
 	}
 );
@@ -64,7 +72,8 @@ export const timerSlice = createSlice({
 		},
 		stopTimer: (state) => {
 			state.isRunning = false;
-			clearTimeout(state.timerId);
+
+			// todo: add abort the asyncThunk
 
 			// if timer was stopped before it expired, subtract the time elapsed from the timeLeft
 			if (state.expireTime !== null) {
@@ -83,6 +92,8 @@ export const timerSlice = createSlice({
 			state.timeLeft = 1500;
 			state.currentTime = null;
 			state.expireTime = null;
+
+			// todo: add abort the asyncThunk
 		},
 	},
 	extraReducers: {
@@ -95,11 +106,11 @@ export const timerSlice = createSlice({
 			state.expireTime = state.currentTime + state.timeLeft;
 		},
 		[startTimer.rejected]: (state, action) => {
-			// console.log("start timer rejected");
+			state.currentTime = null;
+			state.expireTime = null;
 		},
 
 		[continueTimer.pending]: (state) => {
-			// console.log("pending...");
 			state.currentTime = null;
 			state.expireTime = null;
 		},
@@ -111,7 +122,8 @@ export const timerSlice = createSlice({
 			state.expireTime = state.currentTime + state.timeLeft;
 		},
 		[continueTimer.rejected]: (state, action) => {
-			// console.log("continue timer rejected");
+			state.currentTime = null;
+			state.expireTime = null;
 		},
 	},
 });

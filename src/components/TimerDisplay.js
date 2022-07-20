@@ -61,7 +61,11 @@ const TimeLeft = () => {
 			</span>
 
 			{/* audio beep that will play when the timer is at 00:00 */}
-			{/* <audio id="beep" src="https://goo.gl/65cBl1" /> */}
+			<audio
+				id="beep"
+				preload="auto"
+				src="https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav"
+			/>
 		</div>
 	);
 };

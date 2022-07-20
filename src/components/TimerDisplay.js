@@ -5,7 +5,6 @@ import {
 	selectIsRunning,
 	selectTimeLeft,
 	selectExpireTime,
-	selectTimerId,
 } from "../features/timer/timerSlice";
 import formatTime from "../utils/formatTime";
 
@@ -45,8 +44,8 @@ const TimeLeft = () => {
 		}
 	}, [timeLeft, expireTime]);
 
+	// if the timer is running, decrement the countdown every second
 	useEffect(() => {
-		// if the timer is running, decrement the countdown every second
 		if (isRunning) {
 			const interval = setInterval(() => {
 				setCountdown(countdown - 1);

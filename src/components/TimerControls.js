@@ -19,6 +19,10 @@ import {
 	faSun,
 	faMoon,
 } from "@fortawesome/free-solid-svg-icons";
+import { useEffect } from "react";
+
+// todo: consider using a map function to create the buttons
+/* id, title, onClick, icon */
 
 const TimerControls = () => {
 	return (

@@ -1,12 +1,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+// store our timer
+var timerId;
+
 export const startTimer = createAsyncThunk(
 	"timer/startTimer",
 	async (testing, thunkAPI) => {
 		try {
 			const state = thunkAPI.getState();
 
-			setTimeout(() => {
+			timerId = setTimeout(() => {
 				// todo: add play audio + rewind audio
 
 				setTimeout(() => {
@@ -14,8 +17,7 @@ export const startTimer = createAsyncThunk(
 				}, 1000);
 			}, state.timer.timeLeft * 1000);
 		} catch (error) {
-			clearTimeout();
-			// thunkAPI.dispatch(stopTimer());
+			clearTimeout(timerId);
 		}
 	}
 );
@@ -26,7 +28,7 @@ export const continueTimer = createAsyncThunk(
 		try {
 			const state = thunkAPI.getState();
 
-			setTimeout(() => {
+			timerId = setTimeout(() => {
 				// todo: add play audio + rewind audio
 
 				setTimeout(() => {
@@ -34,8 +36,7 @@ export const continueTimer = createAsyncThunk(
 				}, 1000);
 			}, state.timer.timeLeft * 1000);
 		} catch (error) {
-			clearTimeout();
-			// thunkAPI.dispatch(stopTimer());
+			clearTimeout(timerId);
 		}
 	}
 );
@@ -73,7 +74,7 @@ export const timerSlice = createSlice({
 		stopTimer: (state) => {
 			state.isRunning = false;
 
-			// todo: add abort the asyncThunk
+			clearTimeout(timerId);
 
 			// if timer was stopped before it expired, subtract the time elapsed from the timeLeft
 			if (state.expireTime !== null) {
@@ -93,13 +94,11 @@ export const timerSlice = createSlice({
 			state.currentTime = null;
 			state.expireTime = null;
 
-			// todo: add abort the asyncThunk
+			clearTimeout(timerId);
 		},
 	},
 	extraReducers: {
-		[startTimer.pending]: (state) => {
-			// console.log("pending...");
-		},
+		[startTimer.pending]: (state) => {},
 		[startTimer.fulfilled]: (state, action) => {
 			state.isRunning = true;
 			state.currentTime = Date.now();
@@ -111,10 +110,12 @@ export const timerSlice = createSlice({
 		},
 
 		[continueTimer.pending]: (state) => {
+			state.isRunning = false;
 			state.currentTime = null;
 			state.expireTime = null;
 		},
 		[continueTimer.fulfilled]: (state, action) => {
+			state.isRunning = true;
 			state.isSession = !state.isSession;
 			state.timeLeft = state.isSession ? state.session * 60 : state.break * 60;
 

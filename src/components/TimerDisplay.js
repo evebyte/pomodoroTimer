@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import {
-	selectIsSession,
-	selectIsRunning,
-	selectTimeLeft,
-	selectExpireTime,
-} from "../features/timer/timerSlice";
+import { selectIsSession } from "../features/timer/timerSlice";
 import formatTime from "../utils/formatTime";
 
 const TimerDisplay = () => {
@@ -29,9 +24,9 @@ const TimerLabel = () => {
 };
 
 const TimeLeft = () => {
-	const timeLeft = useSelector(selectTimeLeft);
-	const isRunning = useSelector(selectIsRunning);
-	const expireTime = useSelector(selectExpireTime);
+	const { timeLeft, isRunning, expireTime } = useSelector(
+		(state) => state.timer
+	);
 
 	const [countdown, setCountdown] = useState(timeLeft);
 

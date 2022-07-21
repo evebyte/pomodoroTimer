@@ -1,4 +1,46 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
+// store our timer
+var timerId;
+var audio = document.getElementById("beep");
+
+export const startTimer = createAsyncThunk(
+	"timer/startTimer",
+	async (testing, thunkAPI) => {
+		try {
+			const state = thunkAPI.getState();
+
+			timerId = setTimeout(() => {
+				setTimeout(() => {
+					// audio.play();
+
+					thunkAPI.dispatch(continueTimer());
+				}, 1000);
+			}, state.timer.timeLeft * 1000);
+		} catch (error) {
+			clearTimeout(timerId);
+		}
+	}
+);
+
+export const continueTimer = createAsyncThunk(
+	"timer/continueTimer",
+	async (testing, thunkAPI) => {
+		try {
+			const state = thunkAPI.getState();
+
+			timerId = setTimeout(() => {
+				// audio.play();
+
+				setTimeout(() => {
+					thunkAPI.dispatch(continueTimer());
+				}, 1000);
+			}, state.timer.timeLeft * 1000);
+		} catch (error) {
+			clearTimeout(timerId);
+		}
+	}
+);
 
 const initialState = {
 	break: 5,
@@ -8,7 +50,6 @@ const initialState = {
 	timeLeft: 1500,
 	currentTime: null,
 	expireTime: null,
-	timerId: null,
 };
 
 export const timerSlice = createSlice({
@@ -17,58 +58,33 @@ export const timerSlice = createSlice({
 	reducers: {
 		adjustBreak: (state, action) => {
 			state.break = action.payload;
+
+			// if the timer is not running and the session is a break, update the timeLeft
+			if (!state.isRunning && !state.isSession) {
+				state.timeLeft = action.payload * 60;
+			}
 		},
 		adjustSession: (state, action) => {
 			state.session = action.payload;
-			state.timeLeft = state.session * 60;
-		},
-		startTimer: (state) => {
-			state.isRunning = true;
-			state.currentTime = Date.now();
-			state.expireTime = state.currentTime + state.timeLeft;
 
-			// start the timer
-			state.timerId = setTimeout(() => {
-				// todo: handle the timer expiration, what happens when the timer completes?
-				// when the timer completes, do the following
-				completeTimer(state);
-				console.log("timer complete");
-			}, state.timeLeft * 1000);
+			// if the timer is not running and the session is a session, update the timeLeft
+			if (!state.isRunning && state.isSession) {
+				state.timeLeft = state.session * 60;
+			}
 		},
 		stopTimer: (state) => {
 			state.isRunning = false;
-			clearTimeout(state.timerId); // not sure if this is necessary because we also set it to null
-			state.timerId = null;
 
-			// if timer was stopped before it expired, update the timeLeft to the remaining time
+			clearTimeout(timerId);
+
+			// if timer was stopped before it expired, subtract the time elapsed from the timeLeft
 			if (state.expireTime !== null) {
 				const elapsedTime = Date.now() - state.currentTime;
 				state.timeLeft = Math.floor(state.timeLeft - elapsedTime / 1000);
+
+				state.currentTime = null;
 				state.expireTime = null;
 			}
-		},
-		completeTimer: (state) => {
-			// todo: when the timer finishes, prepare the next session and play the audio beep
-			// todo: find a way to call this reducer function upon expiration of the timer?
-
-			console.log("timer complete");
-
-			// state.isSession = !state.isSession;
-			// state.timeLeft = state.isSession ? state.session * 60 : state.break * 60;
-			// console.log(state.timeLeft + " seconds");
-			// state.currentTime = Date.now();
-			// state.expireTime = state.currentTime + state.timeLeft;
-
-			// // start the timer next timer
-			// state.timerId = setTimeout(() => {
-			// 	// when the timer completes, do the following
-			// 	state.isSession = !state.isSession;
-			// 	state.timeLeft = state.isSession
-			// 		? state.session * 60
-			// 		: state.break * 60;
-			// 	state.currentTime = Date.now();
-			// 	state.expireTime = state.currentTime + state.timeLeft;
-			// }, state.timeLeft * 1000);
 		},
 		resetTimer: (state) => {
 			state.break = 5;
@@ -78,20 +94,47 @@ export const timerSlice = createSlice({
 			state.timeLeft = 1500;
 			state.currentTime = null;
 			state.expireTime = null;
-			state.timerId = null;
-			clearTimeout(state.timerId); // not sure if this is necessary because we also set it to null
+
+			clearTimeout(timerId);
+
+			// audio.pause();
+			// audio.currentTime = 0;
+		},
+	},
+	extraReducers: {
+		[startTimer.pending]: (state) => {},
+		[startTimer.fulfilled]: (state, action) => {
+			state.isRunning = true;
+			state.currentTime = Date.now();
+			state.expireTime = state.currentTime + state.timeLeft;
+		},
+		[startTimer.rejected]: (state, action) => {
+			state.currentTime = null;
+			state.expireTime = null;
+		},
+
+		[continueTimer.pending]: (state) => {
+			state.isRunning = false;
+			state.currentTime = null;
+			state.expireTime = null;
+		},
+		[continueTimer.fulfilled]: (state, action) => {
+			state.isRunning = true;
+			state.isSession = !state.isSession;
+			state.timeLeft = state.isSession ? state.session * 60 : state.break * 60;
+
+			state.currentTime = Date.now();
+			state.expireTime = state.currentTime + state.timeLeft;
+		},
+		[continueTimer.rejected]: (state, action) => {
+			state.currentTime = null;
+			state.expireTime = null;
 		},
 	},
 });
 
-export const {
-	adjustBreak,
-	adjustSession,
-	startTimer,
-	stopTimer,
-	completeTimer,
-	resetTimer,
-} = timerSlice.actions;
+export const { adjustBreak, adjustSession, stopTimer, resetTimer } =
+	timerSlice.actions;
 
 export const selectBreak = (state) => state.timer.break;
 export const selectSession = (state) => state.timer.session;
@@ -100,6 +143,5 @@ export const selectIsRunning = (state) => state.timer.isRunning;
 export const selectTimeLeft = (state) => state.timer.timeLeft;
 export const selectCurrentTime = (state) => state.timer.currentTime;
 export const selectExpireTime = (state) => state.timer.expireTime;
-export const selectTimerId = (state) => state.timer.timerId;
 
 export default timerSlice.reducer;

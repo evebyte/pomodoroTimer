@@ -10,6 +10,19 @@ import {
 	resetTimer,
 } from "../features/timer/timerSlice";
 
+// font awesome
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+	faPlay,
+	faPause,
+	faSyncAlt,
+	faSun,
+	faMoon,
+} from "@fortawesome/free-solid-svg-icons";
+
+// todo: consider using a map function to create the buttons
+/* id, title, onClick, icon */
+
 const TimerControls = () => {
 	return (
 		<div id="controls" className="text-center m-2">
@@ -38,11 +51,11 @@ const StartStop = () => {
 		>
 			{isRunning ? (
 				<span>
-					<i className="fa-solid fa-pause"></i> pause
+					<FontAwesomeIcon icon={faPause} /> pause
 				</span>
 			) : (
 				<span>
-					<i className="fa-solid fa-play"></i> play
+					<FontAwesomeIcon icon={faPlay} /> play
 				</span>
 			)}
 		</button>
@@ -63,7 +76,7 @@ const Reset = () => {
 				rounded-full  p-3 m-1 font-bold hover:scale-110 active:scale-90"
 			onClick={() => dispatch(resetTimer())}
 		>
-			<i className="fa-solid fa-sync-alt"></i> reset
+			<FontAwesomeIcon icon={faSyncAlt} /> reset
 		</button>
 	);
 };
@@ -85,11 +98,11 @@ const ToggleDarkMode = () => {
 		>
 			{darkTheme ? (
 				<span>
-					<i class="fa-solid fa-sun"></i> light
+					<FontAwesomeIcon icon={faSun} /> light
 				</span>
 			) : (
 				<span>
-					<i class="fa-solid fa-moon"></i> dark
+					<FontAwesomeIcon icon={faMoon} /> dark
 				</span>
 			)}
 		</button>

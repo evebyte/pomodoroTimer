@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 // store our timer
 var timerId;
+var audio = document.getElementById("beep");
 
 export const startTimer = createAsyncThunk(
 	"timer/startTimer",
@@ -10,9 +11,9 @@ export const startTimer = createAsyncThunk(
 			const state = thunkAPI.getState();
 
 			timerId = setTimeout(() => {
-				// todo: add play audio + rewind audio
-
 				setTimeout(() => {
+					// audio.play();
+
 					thunkAPI.dispatch(continueTimer());
 				}, 1000);
 			}, state.timer.timeLeft * 1000);
@@ -29,7 +30,7 @@ export const continueTimer = createAsyncThunk(
 			const state = thunkAPI.getState();
 
 			timerId = setTimeout(() => {
-				// todo: add play audio + rewind audio
+				// audio.play();
 
 				setTimeout(() => {
 					thunkAPI.dispatch(continueTimer());
@@ -95,6 +96,9 @@ export const timerSlice = createSlice({
 			state.expireTime = null;
 
 			clearTimeout(timerId);
+
+			// audio.pause();
+			// audio.currentTime = 0;
 		},
 	},
 	extraReducers: {

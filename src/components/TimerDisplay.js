@@ -49,6 +49,14 @@ const TimeLeft = () => {
 		}
 	}, [countdown, setCountdown, isRunning]);
 
+	// a way to audio play
+	// useEffect(() => {
+	// 	if (countdown === 0) {
+	// 		const audio = document.getElementById("beep");
+	// 		audio.play();
+	// 	}
+	// }, [countdown]);
+
 	return (
 		<div id="time-left" className="m-2">
 			<span id="ticonstme-left-text" className="text-8xl">

@@ -17,7 +17,7 @@
 .env.development.local
 .env.test.local
 .env.production.local
-.pomodoro-timer-.code-workspace
+.pomodoro-timer.code-workspace
 
 npm-debug.log*
 yarn-debug.log*

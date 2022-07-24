@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 // store our timer
 var timerId;
-var audio = document.getElementById("beep");
+// var beep = document.getElementById("beep");
 
 export const startTimer = createAsyncThunk(
 	"timer/startTimer",
@@ -12,10 +12,8 @@ export const startTimer = createAsyncThunk(
 
 			timerId = setTimeout(() => {
 				setTimeout(() => {
-					// audio.play();
-
 					thunkAPI.dispatch(continueTimer());
-				}, 1000);
+				}, 1000).then(document.getElementById("beep").play());
 			}, state.timer.timeLeft * 1000);
 		} catch (error) {
 			clearTimeout(timerId);
@@ -34,7 +32,7 @@ export const continueTimer = createAsyncThunk(
 
 				setTimeout(() => {
 					thunkAPI.dispatch(continueTimer());
-				}, 1000);
+				}, 1000).then(document.getElementById("beep").play());
 			}, state.timer.timeLeft * 1000);
 		} catch (error) {
 			clearTimeout(timerId);
@@ -97,8 +95,8 @@ export const timerSlice = createSlice({
 
 			clearTimeout(timerId);
 
-			// audio.pause();
-			// audio.currentTime = 0;
+			document.getElementById("beep").pause();
+			document.getElementById("beep").currentTime = 0;
 		},
 	},
 	extraReducers: {

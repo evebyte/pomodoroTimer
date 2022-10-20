@@ -2,9 +2,9 @@
 
 Break time into intervals and stay focused while working.
 
-![pomodoro-timer-light](https://user-images.githubusercontent.com/49453037/179174122-ba8e611e-2411-4e49-9790-57db8a6cc18a.png)
+![pomodoro-timer-light-screenshot](https://user-images.githubusercontent.com/49453037/197070745-cfdbe86e-1000-43f6-a33c-23ad89ec4581.png)
 
-![pomodoro-timer-dark](https://user-images.githubusercontent.com/49453037/179174136-2efcce47-0f25-4eb5-bfd2-9aaf0d3fc9ab.png)
+![pomodoro-timer-dark-screenshot](https://user-images.githubusercontent.com/49453037/197070757-9cb3bfb9-bdcf-43e7-8779-b6441074800b.png)
 
 Created with React, Redux, and TailwindCSS app created for a freecodecamp.org project.
 
